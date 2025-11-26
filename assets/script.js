@@ -1,10 +1,9 @@
 // assets/script.js
 
-// --- KONFIGURASI STYLE ---
 const NAV_ACTIVE = ['font-bold', 'text-coffee-900'];
 const NAV_INACTIVE = ['font-medium', 'text-coffee-700'];
 
-// 1. Fungsi Panggil Komponen (Header/Footer)
+// 1. Load Component
 async function loadComponent(id, file, callback) {
   try {
     const response = await fetch(file);
@@ -17,7 +16,7 @@ async function loadComponent(id, file, callback) {
   }
 }
 
-// 2. Fungsi Helper: Update Tampilan Link
+// 2. Helper Style
 function setLinkState(link, isActive) {
   if (isActive) {
     link.classList.remove(...NAV_INACTIVE);
@@ -28,18 +27,22 @@ function setLinkState(link, isActive) {
   }
 }
 
-// 3. Logika Utama Navbar (Termasuk Mobile & Path Fixer)
+// 3. Logika Navbar
 function initNavbarLogic() {
   const pathName = window.location.pathname;
+  // Deteksi folder repo (kafe-cerita) jika ada
   const isInMenuFolder = pathName.includes('/menu/');
-  const isHomePage = !isInMenuFolder && (pathName === '/' || pathName.endsWith('index.html'));
+  // Homepage adalah root repo ATAU index.html
+  const isHomePage = !isInMenuFolder && (pathName.endsWith('/') || pathName.endsWith('index.html'));
 
-  // A. Perbaikan Jalur Link (Path Fixer)
+  // A. PATH FIXER (Kunci agar link tidak rusak di GitHub Pages)
   if (isInMenuFolder) {
     const dynamicLinks = document.querySelectorAll('.nav-link-dynamic');
     dynamicLinks.forEach(link => {
       const originalHref = link.getAttribute('href');
+      // Jangan ubah link eksternal atau hash murni
       if(originalHref && !originalHref.startsWith('http') && !originalHref.startsWith('#')) {
+         // Jika link belum punya ../, tambahkan
          if(!originalHref.startsWith('../')) {
              link.setAttribute('href', '../' + originalHref);
          }
@@ -47,7 +50,7 @@ function initNavbarLogic() {
     });
   }
 
-  // B. Logic Mobile Menu Toggle & Body Scroll Lock
+  // B. Mobile Menu & Scroll Lock
   const btn = document.getElementById('mobile-menu-btn');
   const menu = document.getElementById('mobile-menu');
   const icon = document.getElementById('menu-icon');
@@ -56,14 +59,10 @@ function initNavbarLogic() {
       const newBtn = btn.cloneNode(true); 
       btn.parentNode.replaceChild(newBtn, btn);
       
-      // Fungsi Toggle Menu
       const toggleMenu = () => {
           menu.classList.toggle('hidden');
           const isMenuOpen = !menu.classList.contains('hidden');
-          
           icon.textContent = isMenuOpen ? 'close' : 'menu';
-
-          // LOGIKA KUNCI SCROLL (PENTING AGAR TIDAK GERAK)
           if (isMenuOpen) {
               document.body.style.overflow = 'hidden'; 
           } else {
@@ -73,7 +72,6 @@ function initNavbarLogic() {
 
       newBtn.addEventListener('click', toggleMenu);
 
-      // Tutup menu otomatis saat link diklik
       const mobileLinks = menu.querySelectorAll('a');
       mobileLinks.forEach(link => {
           link.addEventListener('click', () => {
@@ -88,7 +86,7 @@ function initNavbarLogic() {
   const navLinks = document.querySelectorAll('#desktop-nav a.nav-item, #mobile-menu a');
 
   if (isInMenuFolder) {
-      // Logic statis untuk halaman Menu
+      // Logic statis halaman Menu
       navLinks.forEach(link => {
           const href = link.getAttribute('href');
           if (href && href.includes('menu')) {
@@ -98,20 +96,15 @@ function initNavbarLogic() {
           }
       });
   } else if (isHomePage) {
-      // Logic dinamis (Scrollspy) untuk halaman Beranda
+      // Logic dinamis Beranda
       initHomepageScrollspy(navLinks);
   }
 }
 
-// 4. Scrollspy Khusus Homepage
+// 4. Scrollspy Homepage
 function initHomepageScrollspy(navLinks) {
   const sections = document.querySelectorAll('section[id]'); 
-  
-  const observerOptions = {
-    root: null,
-    rootMargin: "-30% 0px -60% 0px", 
-    threshold: 0
-  };
+  const observerOptions = { root: null, rootMargin: "-30% 0px -60% 0px", threshold: 0 };
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -122,8 +115,9 @@ function initHomepageScrollspy(navLinks) {
            const href = link.getAttribute('href');
            let shouldActive = false;
            
+           // Cek link beranda (./ atau index.html)
            if (id === 'home' || id === 'header-placeholder') { 
-               if (href === '/' || href === './' || href === 'index.html' || href === '') shouldActive = true;
+               if (href === './' || href === 'index.html' || href === '') shouldActive = true;
            } else {
                if (href && href.includes('#' + id)) shouldActive = true;
            }
@@ -136,17 +130,14 @@ function initHomepageScrollspy(navLinks) {
     });
   }, observerOptions);
 
-  sections.forEach(section => {
-    observer.observe(section);
-  });
+  sections.forEach(section => { observer.observe(section); });
 }
 
-// Helper clean up
 function cleanUpActiveClasses(navLinks, activeId) {
     navLinks.forEach(link => {
         const href = link.getAttribute('href');
         let isMatch = false;
-        if ((activeId === 'home' || activeId === 'header-placeholder') && (href === '/' || href === 'index.html' || href === '')) {
+        if ((activeId === 'home' || activeId === 'header-placeholder') && (href === './' || href === 'index.html' || href === '')) {
             isMatch = true;
         } else if (href && href.includes('#' + activeId)) {
             isMatch = true;
@@ -177,24 +168,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const isInMenuFolder = window.location.pathname.includes('/menu/');
   const prefix = isInMenuFolder ? '../' : ''; 
 
-  // Load Header
   loadComponent('header-placeholder', prefix + 'layouts/header.html', () => {
-      // 1. Init Logic Navbar
       initNavbarLogic();
 
-      // 2. Init Efek Scroll Header (SOLUSI MASALAH "NABRAK")
       const navbar = document.getElementById('navbar');
       if(navbar) {
         window.addEventListener('scroll', () => {
             if (window.scrollY > 10) {
-                // SAAT SCROLL: Jadi SOLID (bg-cream) dan ada Shadow
-                // Hapus transparansi agar konten di belakang tidak terlihat "nabrak" logo
+                // Scroll: Solid + Shadow
                 navbar.classList.add('bg-cream', 'shadow-md', 'border-coffee-100');
-                navbar.classList.remove('bg-cream/70', 'backdrop-blur-lg', 'border-white/20');
+                navbar.classList.remove('bg-transparent', 'border-white/20');
             } else {
-                // SAAT DI ATAS: Jadi TRANSPARAN (Glass effect)
+                // Top: Transparent
                 navbar.classList.remove('bg-cream', 'shadow-md', 'border-coffee-100');
-                navbar.classList.add('bg-cream/70', 'backdrop-blur-lg', 'border-white/20');
+                navbar.classList.add('bg-transparent', 'border-white/20');
             }
         });
       }
