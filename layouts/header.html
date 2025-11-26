@@ -1,0 +1,39 @@
+<header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-cream/70 backdrop-blur-lg border-b border-white/20" id="navbar">
+  
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20">
+      
+      <a href="/" class="flex items-center gap-2 group cursor-pointer nav-link-dynamic">
+        <div class="p-1.5 md:p-2 bg-coffee-800 text-white rounded-lg shadow-lg group-hover:rotate-12 transition-transform duration-300">
+          <span class="material-symbols-rounded text-xl md:text-2xl">coffee</span>
+        </div>
+        <div>
+            <h1 class="font-serif text-xl md:text-2xl font-bold text-coffee-900 leading-none">Kafe Cerita</h1>
+            <p class="text-[8px] md:text-[10px] font-medium tracking-widest text-coffee-500 uppercase">Est. 2024</p>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8" id="desktop-nav">
+        <a href="/" class="nav-item nav-link-dynamic text-sm font-medium text-coffee-700 hover:text-coffee-900 transition-colors">Beranda</a>
+        <a href="/menu" class="nav-item nav-link-dynamic text-sm font-medium text-coffee-700 hover:text-coffee-900 transition-colors">Menu</a>
+        <a href="/#tentang" class="nav-item nav-link-dynamic text-sm font-medium text-coffee-700 hover:text-coffee-900 transition-colors">Tentang</a>
+        <a href="/#lokasi" class="nav-item nav-link-dynamic text-sm font-medium text-coffee-700 hover:text-coffee-900 transition-colors">Lokasi</a>
+        
+        <button class="px-5 py-2 bg-coffee-800 text-white text-sm font-semibold rounded-full hover:bg-coffee-900 transition-all shadow-md hover:shadow-lg">
+          Reservasi
+        </button>
+      </nav>
+
+      <button id="mobile-menu-btn" class="md:hidden text-coffee-900 p-2 rounded-md hover:bg-coffee-100 transition-colors">
+        <span class="material-symbols-rounded text-2xl" id="menu-icon">menu</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-cream/95 backdrop-blur-xl border-b border-coffee-100 shadow-xl md:hidden flex flex-col p-4 space-y-4 max-h-[calc(100vh-5rem)] overflow-y-auto">
+    <a href="/" class="nav-link-dynamic block text-base font-medium text-coffee-900 bg-coffee-50 px-4 py-2 rounded-lg">Beranda</a>
+    <a href="/menu" class="nav-link-dynamic block text-base font-medium text-coffee-700 hover:text-coffee-900 hover:bg-coffee-50 px-4 py-2 rounded-lg">Menu</a>
+    <a href="/#tentang" class="nav-link-dynamic block text-base font-medium text-coffee-700 hover:text-coffee-900 hover:bg-coffee-50 px-4 py-2 rounded-lg">Tentang</a>
+    <a href="/#lokasi" class="nav-link-dynamic block text-base font-medium text-coffee-700 hover:text-coffee-900 hover:bg-coffee-50 px-4 py-2 rounded-lg">Lokasi</a>
+  </div>
+</header>
